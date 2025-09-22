@@ -5,35 +5,4 @@ This repository contains all the code (and some additional files) from my [Kuber
 The files for the [second edition](http://kubernetes-in-action.com/second-edition) of the book are in a [different repository](http://github.com/luksa/kubernetes-in-action-2nd-edition).
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Sree Hari – Test Commit
