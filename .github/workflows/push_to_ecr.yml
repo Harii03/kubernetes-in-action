@@ -1,0 +1,44 @@
+name: push_to_ECR
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}  
+      BUILD_CONTEXT: ch02/kubia                           
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (STS)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push
+        env:
+          ECR_REGISTRY:  ${{ steps.login-ecr.outputs.registry }}  # <account>.dkr.ecr.<region>.amazonaws.com
+          IMAGE_TAG:     ${{ github.sha }}
+        run: |
+          echo "Sree Hari – Building $ECR_REPOSITORY from $BUILD_CONTEXT"
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG $BUILD_CONTEXT
+          docker tag  $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Output image URI
+        env:
+          ECR_REGISTRY:  ${{ steps.login-ecr.outputs.registry }}
+        run: echo "IMAGE = $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}"
