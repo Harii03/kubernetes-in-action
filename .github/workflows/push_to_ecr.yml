@@ -10,7 +10,7 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}  
-      BUILD_CONTEXT: ch02/kubia                           
+      BUILD_CONTEXT: chapter02/kubia                           
 
     steps:
       - name: Checkout
